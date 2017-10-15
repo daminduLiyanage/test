@@ -16,6 +16,7 @@ router.post('/', function (req, res, next) {
   });
 });
 
+
 /* GET list all job postings */
 router.get('/', function (req, res, next) {
   JobPosting.find({}, function (err, postings) {
@@ -48,6 +49,28 @@ router.delete('/:_id', function (req, res, next) {
     }
   });
 });
+
+
+/*Update specific posting */
+
+router.put('/:_id', function (req, res){
+  JobPosting.findByIdAndUpdate(
+  {_id: req.params._id},
+  {$set: {title: req.body.title}},
+  {upsert: true},
+    function(err, newPosting){
+      if(err){
+        res.status('An error');
+        res.status(500);
+      } else {
+        console.log(newPosting);
+        console.log('sent OK');
+        res.status(200);
+      }
+  });
+});
+
+
 
 /* GET remove all postings */
 /* This is useful for testing purposes */
