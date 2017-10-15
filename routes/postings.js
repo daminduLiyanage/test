@@ -28,18 +28,18 @@ router.get('/', function (req, res, next) {
   });
 });
 
-// /* GET show job posting */
-// router.get('/:_id', function (req, res, next) {
-//   JobPosting.findOne(postingId: req.params._id, function (err, posting) {
-//     if (err) {
-//       res.status(500).json({error: err});
-//     } else {
-//       res.status(200).json(posting);
-//     }
-//   });
-// });
+/* GET show job posting */
+router.get('/:_id', function (req, res, next) {
+  JobPosting.findOne(req.params._id, function (err, posting) {
+    if (err) {
+      res.status(500).json({error: err});
+    } else {
+      res.status(200).json(posting);
+    }
+  });
+});
 
-
+/* GET job posting using postingId */
 // router.get('/:_id', function(req, res, next){
 //   JobPosting.findOne({postingId: req.params._id},
 //     function(err, posting){
@@ -53,23 +53,42 @@ router.get('/', function (req, res, next) {
 //     });
 // });
 
+/* GET QUERY job posting using postingId */
 router.get('/:postingId', function(req, res, next){
   JobPosting.
-  find().
-  where('postingId').equals(req.params.postingId).
-  exec(function(err, posting){
-      if(err){
-        res.status(500);
-        console.log('It is an internal server error!')
-      } else {
-        res.status(200).json(posting);
-        console.log('Here is what we got:');
-        console.log(posting);
-      }
-  });
+    find().
+    where('postingId').equals(req.params.postingId).
+    exec(function(err, posting){
+        if(err){
+          res.status(500);
+          console.log('It is an internal server error!')
+        } else {
+          res.status(200).json(posting);
+          console.log('Here is what we got:');
+          console.log(posting);
+        }
+    });
 });
 
-/* DELETE remove a posting */
+/* DELETE QUERY romove a posting with postingId */
+router.delete('/:postingId', function (req, res, next) {
+  JobPosting.
+    deleteOne().
+    where('postingId').equals(req.params.postingId).
+    exec(function(err, posting){
+      if(err){
+        res.status(500);
+        console.log('Oops. Deleting wasn\'t succesful!');
+      } else {
+        res.status(200);
+        console.log('Here is what we did:');
+        console.log('\tDeleted 1 record which has postingId as '+req.params.postingId);
+      }
+    });
+});
+
+
+/* DELETE remove a posting with primary Id */
 router.delete('/:_id', function (req, res, next) {
   JobPosting.findByIdAndRemove(req.params._id, function (err, posting) {
     if (err) {
@@ -82,7 +101,6 @@ router.delete('/:_id', function (req, res, next) {
 
 
 /*Update specific posting */
-
 router.put('/:_id', function (req, res){
   JobPosting.findOneAndUpdate(
   {postingId: req.params._id},
@@ -98,11 +116,6 @@ router.put('/:_id', function (req, res){
         res.status(200);
       }
   });
-});
-
-
-router.put('/:_id', function (req, res){
-  Model.where({ postingId: id }).update({ $set: { title: 'words' }})
 });
                                                 
 
