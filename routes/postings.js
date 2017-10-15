@@ -28,30 +28,6 @@ router.get('/', function (req, res, next) {
   });
 });
 
-/* GET show job posting */
-router.get('/:_id', function (req, res, next) {
-  JobPosting.findOne(req.params._id, function (err, posting) {
-    if (err) {
-      res.status(500).json({error: err});
-    } else {
-      res.status(200).json(posting);
-    }
-  });
-});
-
-/* GET job posting using postingId */
-// router.get('/:_id', function(req, res, next){
-//   JobPosting.findOne({postingId: req.params._id},
-//     function(err, posting){
-//       if(err){
-//         res.status(500);
-//         console.log('did not get it!');
-//       } else {
-//         res.status(200).json(posting);
-//         console.log('got it!');
-//       }
-//     });
-// });
 
 /* GET QUERY job posting using postingId */
 router.get('/:postingId', function(req, res, next){
@@ -70,7 +46,33 @@ router.get('/:postingId', function(req, res, next){
     });
 });
 
-/* DELETE QUERY romove a posting with postingId */
+/* GET show job posting */
+// router.get('/:_id', function (req, res, next) {
+//   JobPosting.findOne(req.params._id, function (err, posting) {
+//     if (err) {
+//       res.status(500).json({error: err});
+//     } else {
+//       res.status(200).json(posting);
+//     }
+//   });
+// });
+
+/* GET job posting using postingId */
+// router.get('/:_id', function(req, res, next){
+//   JobPosting.findOne({postingId: req.params._id},
+//     function(err, posting){
+//       if(err){
+//         res.status(500);
+//         console.log('did not get it!');
+//       } else {
+//         res.status(200).json(posting);
+//         console.log('got it!');
+//       }
+//     });
+// });
+
+
+/* DELETE QUERY romoves a posting with postingId */
 router.delete('/:postingId', function (req, res, next) {
   JobPosting.
     deleteOne().
@@ -82,41 +84,56 @@ router.delete('/:postingId', function (req, res, next) {
       } else {
         res.status(200);
         console.log('Here is what we did:');
-        console.log('\tDeleted 1 record which has postingId as '+req.params.postingId);
+        console.log('\tDeleted 1 record which has postingId as ' + req.params.postingId);
       }
     });
 });
 
 
 /* DELETE remove a posting with primary Id */
-router.delete('/:_id', function (req, res, next) {
-  JobPosting.findByIdAndRemove(req.params._id, function (err, posting) {
-    if (err) {
-      res.status(500).json({error: err});
-    } else {
-      res.status(200).json(posting);
-    }
-  });
-});
+// router.delete('/:_id', function (req, res, next) {
+//   JobPosting.findByIdAndRemove(req.params._id, function (err, posting) {
+//     if (err) {
+//       res.status(500).json({error: err});
+//     } else {
+//       res.status(200).json(posting);
+//     }
+//   });
+// });
 
+/*Update specific posting with PUT QUERY */
+router.put('/:postingId', function (req,res){
+  JobPosting.
+    update({$set: {title: req.body.title}}).
+    where('postingId').equals(req.params.postingId).
+    exec(function(err, posting){
+      if(err){
+        res.status(500);
+        console.log('Oops. Updating wasn\'t succesful');
+      } else {
+        res.status(200).json(posting);
+        console.log('\tUpdated 1 record which has postingId as ' + req.params.postingId);
+      }
+    });
+});
 
 /*Update specific posting */
-router.put('/:_id', function (req, res){
-  JobPosting.findOneAndUpdate(
-  {postingId: req.params._id},
-  {$set: {title: req.body.title}},
-  {upsert: true},
-    function(err, newPosting){
-      if(err){
-        res.status('An error');
-        res.status(500);
-      } else {
-        console.log(newPosting);
-        console.log('sent OK');
-        res.status(200);
-      }
-  });
-});
+// router.put('/:_id', function (req, res){
+//   JobPosting.findOneAndUpdate(
+//   {postingId: req.params._id},
+//   {$set: {title: req.body.title}},
+//   {upsert: true},
+//     function(err, newPosting){
+//       if(err){
+//         res.status('An error');
+//         res.status(500);
+//       } else {
+//         console.log(newPosting);
+//         console.log('sent OK');
+//         res.status(200);
+//       }
+//   });
+// });
                                                 
 
 
