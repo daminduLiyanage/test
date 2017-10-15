@@ -28,14 +28,44 @@ router.get('/', function (req, res, next) {
   });
 });
 
-/* GET show job posting */
-router.get('/:_id', function (req, res, next) {
-  JobPosting.findById(req.params._id, function (err, posting) {
-    if (err) {
-      res.status(500).json({error: err});
-    } else {
-      res.status(200).json(posting);
-    }
+// /* GET show job posting */
+// router.get('/:_id', function (req, res, next) {
+//   JobPosting.findOne(postingId: req.params._id, function (err, posting) {
+//     if (err) {
+//       res.status(500).json({error: err});
+//     } else {
+//       res.status(200).json(posting);
+//     }
+//   });
+// });
+
+
+// router.get('/:_id', function(req, res, next){
+//   JobPosting.findOne({postingId: req.params._id},
+//     function(err, posting){
+//       if(err){
+//         res.status(500);
+//         console.log('did not get it!');
+//       } else {
+//         res.status(200).json(posting);
+//         console.log('got it!');
+//       }
+//     });
+// });
+
+router.get('/:postingId', function(req, res, next){
+  JobPosting.
+  find().
+  where('postingId').equals(req.params.postingId).
+  exec(function(err, posting){
+      if(err){
+        res.status(500);
+        console.log('It is an internal server error!')
+      } else {
+        res.status(200).json(posting);
+        console.log('Here is what we got:');
+        console.log(posting);
+      }
   });
 });
 
@@ -54,8 +84,8 @@ router.delete('/:_id', function (req, res, next) {
 /*Update specific posting */
 
 router.put('/:_id', function (req, res){
-  JobPosting.findByIdAndUpdate(
-  {_id: req.params._id},
+  JobPosting.findOneAndUpdate(
+  {postingId: req.params._id},
   {$set: {title: req.body.title}},
   {upsert: true},
     function(err, newPosting){
@@ -70,6 +100,11 @@ router.put('/:_id', function (req, res){
   });
 });
 
+
+router.put('/:_id', function (req, res){
+  Model.where({ postingId: id }).update({ $set: { title: 'words' }})
+});
+                                                
 
 
 /* GET remove all postings */
