@@ -53,7 +53,7 @@ router.get('/:postingId', function(req, res, next){
  */
 router.delete('/:postingId', function (req, res, next) {
   JobPosting.
-    findOneAndRemove({postingId: req.params.postingId}, 
+    findOneAndRemove({postingId: req.params.postingId},
       function(err, posting){
       if(err){
         res.status(500);
@@ -64,15 +64,6 @@ router.delete('/:postingId', function (req, res, next) {
 });
 
 
-
-
-
-
-
-
-
-
-
 /**
  * PUT Updates title using postingId
  * 
@@ -80,11 +71,13 @@ router.delete('/:postingId', function (req, res, next) {
  * the body of the request in the type x-www-form-urlencoded using the
  * postingId as the parameter of the request the record will be located, 
  * then updated.
+ * onlyNotEmpty is a middleware.
  */
 router.put('/:postingId', onlyNotEmpty, function (req,res){
   JobPosting.findOneAndUpdate(
       {postingId: req.params.postingId}, 
       {$set: req.bodyNotEmpty},
+      {new: true},
       function(err, posting){
         if(err){
           res.status(500);
