@@ -54,11 +54,11 @@ router.get('/:postingId', function(req, res, next){
 router.delete('/:postingId', function (req, res, next) {
   JobPosting.
     findOneAndRemove({postingId: req.params.postingId},
-      function(err, posting){
+      function(err){
       if(err){
         res.status(500);
       } else {
-        res.status(200).json(posting);
+        res.send(200);
       }
     });
 });
@@ -108,7 +108,6 @@ module.exports = router;
  * checking and removing null fields in the request body. notEmptyBody
  * is the output. 
  */
-
 function onlyNotEmpty (req, res, next) {
     const out = {};
     for (var key in req.body){
