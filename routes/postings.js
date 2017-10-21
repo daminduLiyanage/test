@@ -28,73 +28,71 @@ router.get('/', function (req, res, next) {
 });
 
 /**
- * GET QUERY job posting using postingId
+ * GET job posting using postingId
  *
  * When a GET request is made along with the postingID as the 
  * parameter, specific record will be shown. 
  */
 router.get('/:postingId', function(req, res, next){
   JobPosting.
-    find().
-    where('postingId').equals(req.params.postingId).
-    exec(function(err, posting){
+    findOne({postingId: req.params.postingId}, 
+      function(err, posting){
         if(err){
           res.status(500);
-          console.log('We weren\'t able to get the record!')
         } else {
           res.status(200).json(posting);
-          console.log('Here is what we got:');
-          console.log(posting);
         }
     });
 });
 
 /**
- * DELETE QUERY removes a posting with postingId
+ * DELETE removes a posting with postingId
  * 
  * When a DELETE request is made along with the postingId as the 
  * parameter, the specific record will get deleted. 
  */
 router.delete('/:postingId', function (req, res, next) {
   JobPosting.
-    deleteOne().
-    where('postingId').equals(req.params.postingId).
-    exec(function(err, posting){
+    findOneAndRemove({postingId: req.params.postingId}, 
+      function(err, posting){
       if(err){
         res.status(500);
-        console.log('Oops. Deleting wasn\'t succesful!');
       } else {
         res.status(200).json(posting);
-        console.log('Here is what we did:');
-        console.log('\tDeleted 1 record which has postingId as ' 
-          + req.params.postingId);
       }
     });
 });
 
+
+
+
+
+
+
+
+
+
+
 /**
- * PUT QUERY Updates title using postingId
+ * PUT Updates title using postingId
  * 
  * When a PUT request is made along with the title as the key value in
  * the body of the request in the type x-www-form-urlencoded using the
  * postingId as the parameter of the request the record will be located, 
  * then updated.
  */
-router.put('/:postingId', function (req,res){
-  JobPosting.
-    update({$set: {title: req.body.title}}).
-    where('postingId').equals(req.params.postingId).
-    exec(function(err, posting){
-      if(err){
-        res.status(500);
-        console.log('Oops. Updating wasn\'t succesful');
-      } else {
-        res.status(200).json(posting);
-        console.log('\tUpdated 1 record which has postingId as ' 
-          + req.params.postingId);
-      }
-    });
-});
+router.put('/:postingId', onlyNotEmpty, function (req,res){
+  JobPosting.findOneAndUpdate(
+      {postingId: req.params.postingId}, 
+      {$set: req.bodyNotEmpty},
+      function(err, posting){
+        if(err){
+          res.status(500);
+        } else {
+          res.status(200).json(posting);
+        }
+      });
+  });
 
 /* GET remove all postings */
 /* This is useful for testing purposes */
@@ -109,3 +107,21 @@ router.get('/nuke', function (req, res, next) {
 });
 
 module.exports = router;
+
+/**
+ * Middleware to provide support PUT Update method
+ *
+ * Following middleware provides support to the Update request by 
+ * checking and removing null fields in the request body. notEmptyBody
+ * is the output. 
+ */
+
+function onlyNotEmpty (req, res, next) {
+    const out = {};
+    for (var key in req.body){
+      if(req.body[key]!=null)
+        out[key] = req.body[key];
+    }
+    req.bodyNotEmpty = out;
+    next();
+}
